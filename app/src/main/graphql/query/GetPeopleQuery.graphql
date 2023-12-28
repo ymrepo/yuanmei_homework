@@ -1,0 +1,8 @@
+query GetPeopleQuery {
+    allPeople {
+        totalCount
+        people {
+            name
+        }
+    }
+}
