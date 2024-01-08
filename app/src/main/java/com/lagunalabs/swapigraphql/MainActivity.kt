@@ -119,7 +119,8 @@ class MainActivity : ComponentActivity() {
                 enterTransition = {
                     slideIntoContainer(
                         towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                        animationSpec = tween(400)
+                        animationSpec = tween(400),
+
                     )
                 },
                 exitTransition = {
