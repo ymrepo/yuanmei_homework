@@ -24,7 +24,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,13 +48,14 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -85,7 +85,6 @@ class MainActivity : ComponentActivity() {
         const val TAG = "MainActivity"
 
         object ParamsConfig {
-            const val PARAMS_HOMEWORLD = "homeworld"
             const val PARAMS_NAME = "name"
         }
 
@@ -113,42 +112,43 @@ class MainActivity : ComponentActivity() {
             ) {
                 PersonList()
             }
-            composable(
-                route = "${ROUTE_PAGE_INFO}/{${ParamsConfig.PARAMS_NAME}}",
+            composable(route = "${ROUTE_PAGE_INFO}/{${ParamsConfig.PARAMS_NAME}}",
                 arguments = listOf(navArgument(ParamsConfig.PARAMS_NAME) {
                     type = NavType.StringType
-                }), enterTransition = {
+                }),
+                enterTransition = {
                     slideIntoContainer(
                         towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                         animationSpec = tween(400)
                     )
-                }, exitTransition = {
+                },
+                exitTransition = {
                     slideOutOfContainer(
                         towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                         animationSpec = tween(400)
                     )
-                }, popEnterTransition = {
+                },
+                popEnterTransition = {
                     slideIntoContainer(
                         towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                         animationSpec = tween(400)
                     )
-                }, popExitTransition = {
+                },
+                popExitTransition = {
                     slideOutOfContainer(
                         towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                         animationSpec = tween(400)
                     )
-                }
-            ) {
+                }) {
                 it.arguments?.getString(ParamsConfig.PARAMS_NAME)?.let { name -> PersonInfo(name) }
             }
         }
     }
 
     @Composable
-    @OptIn(ExperimentalMaterial3Api::class)
     @Preview
     private fun PersonList() {
-        SWAPIGraphQLTheme() {
+        SWAPIGraphQLTheme {
             // region This is an example of how to use `ApolloNetworking` - feel free to delete
             val scope = rememberCoroutineScope()
             val personList = remember {
@@ -212,7 +212,7 @@ class MainActivity : ComponentActivity() {
 
         ) {
             Text(
-                text = "People",
+                text = stringResource(id = R.string.text_people),
                 color = Color.White,
                 fontSize = 25.sp,
                 textAlign = TextAlign.Center,
@@ -223,7 +223,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun ItemPerson(item: Person) {
-        Column() {
+        Column {
             Row(modifier = Modifier
                 .background(colorItem)
                 .clickable {
@@ -237,12 +237,12 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(30.dp, 0.dp, 0.dp, 0.dp)
                     )
                     Text(
-                        text = "Height:${item.height}",
+                        text = stringResource(id = R.string.item_height, item.height.toString()),
                         color = Color.White,
                         modifier = Modifier.padding(30.dp, 0.dp, 0.dp, 0.dp)
                     )
                     Text(
-                        text = "Mass:${item.mass}",
+                        text = stringResource(id = R.string.item_mass, item.mass.toString()),
                         color = Color.White,
                         modifier = Modifier.padding(30.dp, 0.dp, 0.dp, 0.dp)
                     )
@@ -281,48 +281,6 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    @Composable
-    private fun ClickablePersonName(padding: Dp, name: String) {
-
-        val text = buildAnnotatedString {
-            withStyle(style = SpanStyle(fontSize = 25.sp, color = Color.White)) {
-                append("Click ")
-            }
-            pushStringAnnotation(tag = "CLICKABLE", annotation = "")
-            withStyle(
-                style = SpanStyle(
-                    color = Color.Blue,
-                    fontSize = 30.sp,
-                    textDecoration = TextDecoration.Underline
-                )
-            ) {
-                append("here")
-            }
-            withStyle(style = SpanStyle(fontSize = 25.sp, color = Color.White)) {
-                append(" to view homeworld data for $name ")
-            }
-        }
-        val paddingHorizontal = 30.dp
-        Box(
-            modifier = Modifier.padding(
-                top = padding + paddingHorizontal,
-                start = paddingHorizontal,
-                end = paddingHorizontal
-            )
-        ) {
-            ClickableText(text = text, onClick = {
-
-            })
-            Button(
-                onClick = {
-
-                }
-            ) {
-                Text("Click to collapse sheet")
-            }
-        }
-    }
-
 
     @ExperimentalMaterial3Api
     @Composable
@@ -330,43 +288,26 @@ class MainActivity : ComponentActivity() {
         val sheetState = rememberModalBottomSheetState()
         var showBottomSheet by remember { mutableStateOf(false) }
 
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text(text = "People", color = Color.White) },
-                    navigationIcon = {
-                        IconButton(onClick = { mNavController.navigateUp() }) {
-                            Icon(Icons.Filled.KeyboardArrowLeft, "backIcon", tint = Color.White)
-                        }
-                    },
-                    colors = topAppBarColors(
-                        containerColor = Color.Transparent
-                    )
+        Scaffold(topBar = {
+            TopAppBar(title = {
+                Text(
+                    text = stringResource(id = R.string.text_people), color = Color.White
                 )
-            }
-        ) { contentPadding ->
-            // Screen content
-            BoxBackground()
-
-            val text = buildAnnotatedString {
-                withStyle(style = SpanStyle(fontSize = 25.sp, color = Color.White)) {
-                    append("Click ")
-                }
-                pushStringAnnotation(tag = "CLICKABLE", annotation = "")
-                withStyle(
-                    style = SpanStyle(
-                        color = Color.Blue,
-                        fontSize = 30.sp,
-                        textDecoration = TextDecoration.Underline
+            }, navigationIcon = {
+                IconButton(onClick = { mNavController.navigateUp() }) {
+                    Icon(
+                        Icons.Filled.KeyboardArrowLeft,
+                        "back to person list page",
+                        tint = Color.White
                     )
-                ) {
-                    append("here")
                 }
-                withStyle(style = SpanStyle(fontSize = 25.sp, color = Color.White)) {
-                    append(" to view homeworld data for  $name")
-                }
-            }
+            }, colors = topAppBarColors(
+                containerColor = Color.Transparent
+            )
+            )
+        }) { contentPadding ->
             val paddingHorizontal = 30.dp
+            BoxBackground()
             Box(
                 modifier = Modifier.padding(
                     top = contentPadding.calculateTopPadding() + paddingHorizontal,
@@ -374,26 +315,44 @@ class MainActivity : ComponentActivity() {
                     end = paddingHorizontal
                 )
             ) {
-                ClickableText(text = text, onClick = {
+                ClickableText(text = getString(name), onClick = {
                     showBottomSheet = true
                 })
             }
 
             if (showBottomSheet) {
                 ModalBottomSheet(
-                    modifier = Modifier.fillMaxHeight(),
-                    onDismissRequest = {
+                    modifier = Modifier.fillMaxHeight(), onDismissRequest = {
                         showBottomSheet = false
-                    },
-                    sheetState = sheetState
+                    }, sheetState = sheetState
                 ) {
                     // Sheet content
-                    WebViewScreen("https://swapi.dev/api/planets/2")
+                    WebViewScreen("https://swapi.dev/api/planets/2")//maybe the url need get from the server
                 }
             }
         }
     }
 
+    @Composable
+    private fun getString(name: String): AnnotatedString = buildAnnotatedString {
+        withStyle(style = SpanStyle(fontSize = 25.sp, color = Color.White)) {
+            append(stringResource(id = R.string.text_click))
+        }
+
+        withStyle(
+            style = SpanStyle(
+                color = Color.Blue, fontSize = 30.sp, textDecoration = TextDecoration.Underline
+            )
+        ) {
+            append(stringResource(id = R.string.text_here))
+        }
+        withStyle(style = SpanStyle(fontSize = 25.sp, color = Color.White)) {
+            append(stringResource(id = R.string.text_to_view_homeworld, name))
+        }
+    }
+
+
+    @SuppressLint("SetJavaScriptEnabled")
     @Composable
     fun WebViewScreen(url: String) {
         AndroidView(
@@ -402,8 +361,7 @@ class MainActivity : ComponentActivity() {
                     settings.javaScriptEnabled = true
                     loadUrl(url)
                 }
-            },
-            modifier = Modifier.fillMaxSize()
+            }, modifier = Modifier.fillMaxSize()
         )
     }
 

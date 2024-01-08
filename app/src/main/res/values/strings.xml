@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">SWAPI GraphQL</string>
+    <string name="text_people">People</string>
+    <string name="item_mass">Mass:%s</string>
+    <string name="item_height">Height:%s</string>
+    <string name="item_name">Name:%s</string>
+    <string name="text_click">Click&#160;</string>
+    <string name="text_here">here</string>
+    <string name="text_to_view_homeworld">&#160;to view homeworld data for  %s</string>
 </resources>
